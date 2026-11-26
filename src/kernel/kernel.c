@@ -70,17 +70,18 @@
         terminal_column = 0;
         terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
     
+        for (size_t y = 0; y < VGA_HEIGHT; y++) {
+    for (size_t x = 0; x < VGA_WIDTH; x++) {
+        const size_t index = y * VGA_WIDTH + x;
+        terminal_buffer[index] = vga_entry(' ', terminal_color);
+    }
+}
+
 
     /*that is why os dev is so beautiful, im so lost rn LEL, i mean rn uhhhhhh yeahhh its 12 am rn*/
 
 
-    for (size_t y = 0; y < VGA_HEIGHT; y++){
-        for (size_t x= 0; x < VGA_WIDTH; x++){
-            const size_t index = y * VGA_WIDTH + x;
-            terminal_buffer[index] = vga_entry(' ', terminal_color);
-            
-        }
-    }
+    
     }
     void terminal_setcolor(uint8_t color)
     {
@@ -95,6 +96,22 @@
         terminal_buffer[index] = vga_entry(c, color);
     }
 
+     void terminal_scroll(void){
+        for (size_t y = 0; y < VGA_HEIGHT -1; y++){
+        for (size_t x = 0; x < VGA_WIDTH; x++){
+            const size_t index = y * VGA_WIDTH + x;
+            const size_t next_index = (y + 1) * VGA_WIDTH + x;
+            terminal_buffer[index] = terminal_buffer[next_index];
+            
+        }
+    }
+        for (size_t x = 0; x < VGA_WIDTH; x++){
+            const size_t last_index = (VGA_HEIGHT - 1) * VGA_WIDTH + x;
+            terminal_buffer[last_index] = vga_entry(' ', terminal_color);
+        }
+    
+    }
+
     void terminal_putchar(char c)
     {
         /*handles the \n support for the excercise*/
@@ -104,12 +121,15 @@
             }
 
                 
+    /*keys keys o algo*/
+
 
            if (c == '\n'){
             terminal_column = 0;
             ++terminal_row;
             if (terminal_row == VGA_HEIGHT){
-                    terminal_row = 0;
+                    terminal_scroll();
+                    terminal_row = VGA_HEIGHT - 1;
                 }
             return;
 
@@ -119,14 +139,16 @@
         terminal_putentryat(c, terminal_color, terminal_column, terminal_row); {
         if (++terminal_column == VGA_WIDTH){
             terminal_column = 0;
-            if (++terminal_row == VGA_HEIGHT)
+            if (++terminal_row == VGA_HEIGHT){
             terminal_row = 0;
-
+            }
             
           
         }
        }
     }
+
+   
 
     void terminal_write(const char* data, size_t size)
     {
@@ -147,6 +169,18 @@
 
         terminal_writestring("hehehehe\n");
         terminal_writestring("TEST\n");
+
+        for (int i = 0; i < 30; i++) {
+            
+            terminal_writestring("Scrolling...\n", a);
+        }
+
+        
+    
+    for (volatile uint32_t d = 0; d < 500000000; d++){
+
     }
 
+    terminal_writestring("BOTTOM\n");
+    }
     /*very happy moment*/
