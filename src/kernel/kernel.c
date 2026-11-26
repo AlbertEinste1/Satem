@@ -172,7 +172,7 @@
 
         for (int i = 0; i < 30; i++) {
             
-            terminal_writestring("Scrolling...\n", a);
+            terminal_writestring("Scrolling...\n");
         }
 
         
