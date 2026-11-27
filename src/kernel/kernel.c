@@ -131,7 +131,7 @@
             ++terminal_row;
             if (terminal_row == VGA_HEIGHT){
                     terminal_scroll();
-                    terminal_row = VGA_HEIGHT - 1;
+                    terminal_column = VGA_HEIGHT - 1;
                 }
             return;
 
@@ -182,18 +182,33 @@
 
         /*eh, just a character map*/
         
-        if(status & 0x01){ 
+        if (status & 0x01){ 
         uint16_t port2 = 0x60;
         uint8_t data = inb(port2);
 
         if (data < 128){
             char c = keymap[data];
-            if (c != 0){
+        
+
+            if (c == '\b'){
+                --terminal_column;
+                
+                terminal_writestring(" ");
+                --terminal_column;
+
+                if (terminal_column > 0){
+                    return;
+                }
+            }
+            else if (c != 0){
                 terminal_putchar(c);
             }
+                
+                
+            
         }
 
-
+        
         
     }
 
@@ -207,17 +222,12 @@
         terminal_writestring("hehehehe\n");
         terminal_writestring("TEST\n");
 
-        for (int i = 0; i < 30; i++) {
-            
-            terminal_writestring("Scrolling...\n");
-        }
+        
 
                 
         
     
-    for (volatile uint32_t d = 0; d < 50000000; d++){
-
-    }
+    
 
     terminal_writestring("BOTTOM\n");
 
