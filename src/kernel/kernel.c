@@ -1,6 +1,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "io.h"
+
 
 /*checks if its linux or NOT LINUX fuck*/
 
@@ -140,7 +142,8 @@
         if (++terminal_column == VGA_WIDTH){
             terminal_column = 0;
             if (++terminal_row == VGA_HEIGHT){
-            terminal_row = 0;
+            terminal_scroll();
+            terminal_column = VGA_HEIGHT -1;
             }
             
           
@@ -163,8 +166,26 @@
         terminal_write(data, strlen(data));
     }
 
+
+    static inline void readkey(void){
+        uint16_t port = 0x64;
+        uint8_t status = inb(port);
+
+        if(status & 0x01){ 
+        uint16_t port2 = 0x60;
+        uint8_t data = inb(port2);
+
+
+        if (data == 0x1E){
+            terminal_writestring("a");
+        }
+    }
+
+
+    }
     void kernel_main(void)
     {
+        
         terminal_initialize();
 
         terminal_writestring("hehehehe\n");
@@ -175,12 +196,17 @@
             terminal_writestring("Scrolling...\n");
         }
 
+                
         
     
-    for (volatile uint32_t d = 0; d < 500000000; d++){
+    for (volatile uint32_t d = 0; d < 50000000; d++){
 
     }
 
     terminal_writestring("BOTTOM\n");
+
+    while(1){
+        readkey();
+    }
     }
     /*very happy moment*/
