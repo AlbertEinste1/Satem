@@ -143,7 +143,7 @@
             terminal_column = 0;
             if (++terminal_row == VGA_HEIGHT){
             terminal_scroll();
-            terminal_column = VGA_HEIGHT -1;
+            terminal_row = VGA_HEIGHT -1;
             }
             
           
@@ -185,21 +185,29 @@
         if (status & 0x01){ 
         uint16_t port2 = 0x60;
         uint8_t data = inb(port2);
-
+        /*we check if the data isnt above 128 to obviously avoid printing a letter twice*/
         if (data < 128){
             char c = keymap[data];
         
-
+            /*checks if we pressed backspace then does another safecheck making sure we are not below column 0*/
             if (c == '\b'){
+                
+                /*if we arent before column 0 go back a column, overwrite it with " " and since overwriting by " " brings up forward by 1 column we go back a column*/
+                if (terminal_column > 0){
                 --terminal_column;
                 
                 terminal_writestring(" ");
                 --terminal_column;
-
-                if (terminal_column > 0){
-                    return;
+                   
+                }
+                    /*this is so buggy. im trying to implement the uhh tab thing if we press tab it brings 4 columns to the right*/
+                if (c == '\t'){
+                    ++terminal_column;
+                    terminal_writestring(" ");
                 }
             }
+
+            /*checks its a valid character and if it is prints it (part of the tab bug)*/
             else if (c != 0){
                 terminal_putchar(c);
             }
