@@ -201,11 +201,11 @@
                    
                 }
                     /*this is so buggy. im trying to implement the uhh tab thing if we press tab it brings 4 columns to the right*/
-                if (c == '\t'){
+                 /*if (c == '\t'){
                     ++terminal_column;
                     terminal_writestring(" ");
-                }
-            }
+                } */
+            }  
 
             /*checks its a valid character and if it is prints it (part of the tab bug)*/
             else if (c != 0){
